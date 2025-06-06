@@ -68,11 +68,13 @@ func Register(db *sql.DB) gin.HandlerFunc {
 			return
 		}
 
+		hashedPasswordStr := string(hashedPassword)
+
 		// Insert user into database
 		var userID int
 		err = db.QueryRow(
 			"INSERT INTO users (username, password_hash, avatar_url) VALUES ($1, $2, $3) RETURNING id",
-			req.Username, hashedPassword, req.AvatarURL,
+			req.Username, hashedPasswordStr, req.AvatarURL,
 		).Scan(&userID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
