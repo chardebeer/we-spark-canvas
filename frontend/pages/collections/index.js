@@ -1,41 +1,160 @@
-// frontend/pages/collections/index.js
 import { useState, useEffect } from "react";
-import Link from "next/link";
+import NextLink from "next/link";
+import Head from "next/head";
+import {
+  Box,
+  Container,
+  Heading,
+  Text,
+  Button,
+  SimpleGrid,
+  Flex,
+  Link,
+  Card,
+  CardBody,
+  CardHeader,
+  CardFooter,
+  Skeleton,
+  useColorModeValue,
+  useToast
+} from "@chakra-ui/react";
+import { AddIcon } from "@chakra-ui/icons";
 import apiClient from "../../lib/axios";
 
 export default function Collections() {
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const toast = useToast();
+  const bgColor = useColorModeValue("white", "gray.800");
+  const borderColor = useColorModeValue("gray.200", "gray.700");
 
   useEffect(() => {
     apiClient
-      .get("/collections")  // You’ll need to implement GET /collections in Go if not already
+      .get("/collections")
       .then((res) => {
-        setCollections(res.data);
+        // Make sure we always have an array
+        setCollections(Array.isArray(res.data) ? res.data : []);
         setLoading(false);
       })
       .catch((err) => {
+        console.error("Error fetching collections:", err);
+        toast({
+          title: "Error fetching collections",
+          description: err.response?.data?.error || "Could not load collections",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
         setError(err);
         setLoading(false);
+        // Initialize with empty array instead of null
+        setCollections([]);
       });
-  }, []);
-
-  if (loading) return <p>Loading…</p>;
-  if (error) return <p>Error loading collections.</p>;
+  }, [toast]);
 
   return (
-    <div className="max-w-5xl mx-auto p-4">
-      <h1 className="text-3xl font-semibold mb-6">Collections</h1>
-      <ul className="space-y-4">
-        {collections.map((col) => (
-          <li key={col.id}>
-            <Link href={`/collections/${col.id}`} className="text-blue-600 hover:underline">
-              {col.title}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      <Head>
+        <title>Collections | We Spark Canvas</title>
+      </Head>
+
+      <Container maxW="container.xl" py={8}>
+        <Flex justify="space-between" align="center" mb={8}>
+          <Box>
+            <Heading as="h1" size="xl" color="pink.500" mb={2}>
+              Collections
+            </Heading>
+            <Text color="gray.600">
+              Discover curated visual inspirations or create your own
+            </Text>
+          </Box>
+          <NextLink href="/collections/new" passHref legacyBehavior>
+            <Button
+              as="a"
+              leftIcon={<AddIcon />}
+              colorScheme="pink"
+              variant="solid"
+              size="md"
+            >
+              Create Collection
+            </Button>
+          </NextLink>
+        </Flex>
+
+        {loading ? (
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <Skeleton key={i} height="200px" borderRadius="lg" />
+            ))}
+          </SimpleGrid>
+        ) : collections.length === 0 ? (
+          <Box
+            textAlign="center"
+            p={10}
+            borderWidth={1}
+            borderRadius="lg"
+            borderStyle="dashed"
+            borderColor={borderColor}
+          >
+            <Heading as="h3" size="md" mb={3} color="gray.500">
+              No Collections Yet
+            </Heading>
+            <Text color="gray.500" mb={6}>
+              Be the first to create an inspiring collection!
+            </Text>
+            <NextLink href="/collections/new" passHref legacyBehavior>
+              <Button as="a" colorScheme="pink" size="md">
+                Create Collection
+              </Button>
+            </NextLink>
+          </Box>
+        ) : (
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
+            {collections.map((collection) => (
+              <Card
+                key={collection.id}
+                borderRadius="lg"
+                overflow="hidden"
+                boxShadow="md"
+                bg={bgColor}
+                transition="transform 0.3s, box-shadow 0.3s"
+                _hover={{ transform: "translateY(-4px)", boxShadow: "lg" }}
+              >
+                <CardHeader pb={0}>
+                  <Heading as="h3" size="md" color="pink.500">
+                    <NextLink
+                      href={`/collections/${collection.id}`}
+                      passHref
+                      legacyBehavior
+                    >
+                      <Link _hover={{ textDecoration: "none" }}>
+                        {collection.title}
+                      </Link>
+                    </NextLink>
+                  </Heading>
+                </CardHeader>
+                <CardBody>
+                  <Text noOfLines={2} color="gray.600">
+                    {collection.description || "No description provided"}
+                  </Text>
+                </CardBody>
+                <CardFooter pt={0}>
+                  <NextLink
+                    href={`/collections/${collection.id}`}
+                    passHref
+                    legacyBehavior
+                  >
+                    <Button as="a" variant="outline" colorScheme="pink" size="sm">
+                      View Collection
+                    </Button>
+                  </NextLink>
+                </CardFooter>
+              </Card>
+            ))}
+          </SimpleGrid>
+        )}
+      </Container>
+    </>
   );
 }

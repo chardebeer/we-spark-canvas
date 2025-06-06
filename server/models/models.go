@@ -4,9 +4,10 @@ import "time"
 
 // User represents a user in the system.
 type User struct {
-  ID        int       `json:"id"`
-  Username  string    `json:"username"`
-  AvatarURL string    `json:"avatar_url,omitempty"`
+  ID           int       `json:"id"`
+  Username     string    `json:"username"`
+  PasswordHash string    `json:"-"` // Never expose in JSON
+  AvatarURL    string    `json:"avatar_url,omitempty"`
 }
 
 // Image represents an uploaded image.

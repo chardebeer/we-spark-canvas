@@ -35,22 +35,36 @@ func main() {
     AllowCredentials: true,
     MaxAge:           12 * time.Hour,
   }))
+  
+  // Auth routes - public
+  router.POST("/auth/register", handlers.Register(db))
+  router.POST("/auth/login", handlers.Login(db))
 
-  // User routes
-  router.POST("/users", handlers.CreateUser(db))
+  // Public routes
   router.GET("/users/:id", handlers.GetUser(db))
-router.GET("/users/:id/images", handlers.GetUserImages(db))
-
-  // Image routes
-  router.POST("/images", handlers.UploadImage(db, ipfsShell))
   router.GET("/images", handlers.GetImages(db))
   router.GET("/images/:id", handlers.GetImage(db))
-  router.POST("/images/:id/heart", handlers.HeartImage(db))
-
-  // Collection routes
-  router.POST("/collections", handlers.CreateCollection(db))
-  router.POST("/collections/:id/images", handlers.AddImageToCollection(db))
+  router.GET("/images/tag/:tag", handlers.GetImagesByTag(db))
+  router.GET("/tags/trending", handlers.GetTrendingTags(db))
   router.GET("/collections/:id", handlers.GetCollection(db))
+  router.GET("/collections", handlers.GetAllCollections(db))
+  
+  // Protected routes - require authentication
+  authorized := router.Group("/")
+  authorized.Use(handlers.AuthMiddleware())
+  {
+    // User routes
+    authorized.GET("/users/:id/images", handlers.GetUserImages(db))
+    authorized.GET("/users/:id/hearts", handlers.GetUserHearts(db))
+    
+    // Image routes
+    authorized.POST("/images", handlers.UploadImage(db, ipfsShell))
+    authorized.POST("/images/:id/heart", handlers.HeartImage(db))
+    
+    // Collection routes
+    authorized.POST("/collections", handlers.CreateCollection(db))
+    authorized.POST("/collections/:id/images", handlers.AddImageToCollection(db))
+  }
 
   port := os.Getenv("PORT")
   if port == "" {

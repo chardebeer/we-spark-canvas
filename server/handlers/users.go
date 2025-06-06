@@ -6,6 +6,7 @@ import (
   "strconv"
 
   "github.com/gin-gonic/gin"
+  "github.com/lib/pq"
   "github.com/chardebeer/we-spark-canvas/server/models"
 )
 
@@ -69,6 +70,47 @@ func GetUserImages(db *sql.DB) gin.HandlerFunc {
        FROM images
        WHERE uploaded_by = $1
        ORDER BY uploaded_at DESC`,
+      userID,
+    )
+    if err != nil {
+      c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+      return
+    }
+    defer rows.Close()
+
+    var images []models.Image
+    for rows.Next() {
+      var img models.Image
+      var tags pq.StringArray
+      if err := rows.Scan(
+        &img.ID, &img.URL, &img.Caption, &tags, &img.Hearts, &img.UploadedBy, &img.UploadedAt,
+      ); err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+      }
+      img.Tags = tags
+      images = append(images, img)
+    }
+    c.JSON(http.StatusOK, images)
+  }
+}
+
+// GetUserHearts handles GET /users/:id/hearts
+func GetUserHearts(db *sql.DB) gin.HandlerFunc {
+  return func(c *gin.Context) {
+    idStr := c.Param("id")
+    userID, err := strconv.Atoi(idStr)
+    if err != nil {
+      c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user id"})
+      return
+    }
+    
+    rows, err := db.Query(
+      `SELECT i.id, i.url, i.caption, i.tags, i.hearts, i.uploaded_by, i.uploaded_at
+       FROM images i
+       JOIN user_hearts h ON i.id = h.image_id
+       WHERE h.user_id = $1
+       ORDER BY h.created_at DESC`,
       userID,
     )
     if err != nil {
