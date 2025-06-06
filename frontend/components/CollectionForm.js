@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Button, FormControl, FormLabel, Input, Textarea, Stack, Heading, useToast } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormLabel, Input, Textarea, Stack, Heading } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import axios from '../lib/axios';
 
@@ -7,7 +7,6 @@ export default function CollectionForm() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const toast = useToast();
   const router = useRouter();
 
   const handleSubmit = async (e) => {
@@ -19,13 +18,7 @@ export default function CollectionForm() {
       const token = localStorage.getItem('token');
       
       if (!token) {
-        toast({
-          title: 'Authentication required',
-          description: 'Please login to create a collection',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
+        console.error('Authentication required: Please login to create a collection');
         router.push('/login');
         return;
       }
@@ -38,25 +31,13 @@ export default function CollectionForm() {
       );
       
       // Show success message
-      toast({
-        title: 'Collection created!',
-        description: `Your collection "${title}" was created successfully.`,
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
+      console.log(`Collection created! Your collection "${title}" was created successfully.`);
       
       // Redirect to the new collection page
       router.push(`/collections/${data.id}`);
     } catch (error) {
       const message = error.response?.data?.error || 'An error occurred';
-      toast({
-        title: 'Error creating collection',
-        description: message,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
+      console.error('Error creating collection:', message);
     } finally {
       setIsLoading(false);
     }

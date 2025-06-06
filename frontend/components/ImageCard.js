@@ -1,4 +1,4 @@
-import { Box, Image, Text, Flex, Tag, TagLabel, HStack } from '@chakra-ui/react';
+import { Box, Image, Text, Flex, HStack } from '@chakra-ui/react';
 import Link from 'next/link';
 
 export default function ImageCard({ image }) {
@@ -58,15 +58,17 @@ export default function ImageCard({ image }) {
               {image.tags && image.tags.length > 0 && (
                 <HStack spacing={1} mt={1} flexWrap="wrap">
                   {image.tags.slice(0, 3).map((tag, index) => (
-                    <Tag
-                      size="sm"
+                    <Box
                       key={index}
+                      px={2}
+                      py={1}
+                      bg="pink.100"
+                      color="pink.800"
                       borderRadius="full"
-                      variant="subtle"
-                      colorScheme="pink"
+                      fontSize="xs"
                     >
-                      <TagLabel>{tag}</TagLabel>
-                    </Tag>
+                      {tag}
+                    </Box>
                   ))}
                   {image.tags.length > 3 && (
                     <Text fontSize="xs" color="gray.500">

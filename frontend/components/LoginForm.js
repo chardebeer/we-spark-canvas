@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Button, FormControl, FormLabel, Input, Stack, Heading, Text, useToast, Link } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormLabel, Input, Stack, Heading, Text, Link } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import axios from '../lib/axios';
 
@@ -9,7 +9,6 @@ export default function LoginForm() {
   const [password, setPassword] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const toast = useToast();
   const router = useRouter();
 
   const handleSubmit = async (e) => {
@@ -29,24 +28,13 @@ export default function LoginForm() {
       localStorage.setItem('user', JSON.stringify(data.user));
       
       // Show success message
-      toast({
-        title: isLogin ? 'Logged in successfully!' : 'Account created!',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
+      console.log(isLogin ? 'Logged in successfully!' : 'Account created!');
       
       // Redirect to home page
       router.push('/');
     } catch (error) {
       const message = error.response?.data?.error || 'An error occurred';
-      toast({
-        title: 'Error',
-        description: message,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
+      console.error('Error:', message);
     } finally {
       setIsLoading(false);
     }

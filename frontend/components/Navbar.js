@@ -12,9 +12,11 @@ import {
 
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
   
   useEffect(() => {
+    setMounted(true);
     // Check authentication status on component mount
     const token = localStorage.getItem("token");
     if (token) {
@@ -110,7 +112,9 @@ export default function Navbar() {
             direction="row"
             spacing={6}
           >
-            {isLoggedIn ? (
+            {!mounted ? (
+              <Box minW="100px" />
+            ) : isLoggedIn ? (
               <Button
                 onClick={handleLogout}
                 fontSize="sm"

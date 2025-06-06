@@ -15,10 +15,8 @@ import {
   CardHeader,
   CardFooter,
   Skeleton,
-  useColorModeValue,
-  useToast
 } from "@chakra-ui/react";
-import { AddIcon } from "@chakra-ui/icons";
+import { Plus } from "lucide-react";
 import apiClient from "../../lib/axios";
 
 export default function Collections() {
@@ -72,7 +70,7 @@ export default function Collections() {
           <NextLink href="/collections/new" passHref legacyBehavior>
             <Button
               as="a"
-              leftIcon={<AddIcon />}
+              leftIcon={<Plus size={16} />}
               colorScheme="pink"
               variant="solid"
               size="md"
