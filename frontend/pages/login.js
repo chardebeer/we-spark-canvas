@@ -1,20 +1,21 @@
-import { Box, Container, Heading } from '@chakra-ui/react';
-import LoginForm from '../components/LoginForm';
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
-import Head from 'next/head';
+// pages/login.jsx
+import * as React from "react";
+import { Box, Container, Heading } from "@chakra-ui/react";
+import LoginForm from "../components/LoginForm";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+import Head from "next/head";
 
 export default function LoginPage() {
   const router = useRouter();
-  
+
   useEffect(() => {
-    // Check if user is already logged in
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
-      router.push('/');
+      router.push("/");
     }
   }, [router]);
-  
+
   return (
     <>
       <Head>
@@ -29,7 +30,7 @@ export default function LoginPage() {
             Login or create an account to start your visual journey
           </Heading>
         </Box>
-        
+
         <LoginForm />
       </Container>
     </>

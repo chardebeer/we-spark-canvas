@@ -1,5 +1,14 @@
+// components/CollectionForm.jsx
 import { useState } from 'react';
-import { Box, Button, FormControl, FormLabel, Input, Textarea, Stack, Heading } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Field,
+  Input,
+  Textarea,
+  Stack,
+  Heading,
+} from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import axios from '../lib/axios';
 
@@ -14,30 +23,23 @@ export default function CollectionForm() {
     setIsLoading(true);
 
     try {
-      // Get token from localStorage
       const token = localStorage.getItem('token');
-      
       if (!token) {
         console.error('Authentication required: Please login to create a collection');
         router.push('/login');
         return;
       }
 
-      // Create collection
       const { data } = await axios.post(
-        '/collections', 
+        '/collections',
         { title, description },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      
-      // Show success message
-      console.log(`Collection created! Your collection "${title}" was created successfully.`);
-      
-      // Redirect to the new collection page
+
+      console.log(`Collection created! "${title}"`);
       router.push(`/collections/${data.id}`);
     } catch (error) {
-      const message = error.response?.data?.error || 'An error occurred';
-      console.error('Error creating collection:', message);
+      console.error('Error creating collection:', error.response?.data?.error || error);
     } finally {
       setIsLoading(false);
     }
@@ -48,36 +50,36 @@ export default function CollectionForm() {
       <Heading mb={6} textAlign="center" color="pink.400">
         Create New Collection
       </Heading>
-      
+
       <form onSubmit={handleSubmit}>
         <Stack spacing={4}>
-          <FormControl id="title" isRequired>
-            <FormLabel>Title</FormLabel>
-            <Input 
+          <Field.Root id="title" required>
+            <Field.Label>Title</Field.Label>
+            <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="My Inspiration Board"
               bg="white"
             />
-          </FormControl>
-          
-          <FormControl id="description">
-            <FormLabel>Description</FormLabel>
-            <Textarea 
+          </Field.Root>
+
+          <Field.Root id="description">
+            <Field.Label>Description</Field.Label>
+            <Textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="A collection of images that inspire me..."
+              placeholder="A collection of images that inspire me…"
               bg="white"
               resize="vertical"
               rows={4}
             />
-          </FormControl>
-          
+          </Field.Root>
+
           <Button
             type="submit"
             colorScheme="pink"
             isLoading={isLoading}
-            loadingText="Creating collection..."
+            loadingText="Creating collection…"
             w="full"
             mt={4}
           >
