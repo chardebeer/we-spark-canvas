@@ -16,6 +16,148 @@ A full-stack image sharing platform with decentralized storage using IPFS, built
 - PostgreSQL
 - IPFS Desktop or daemon
 
+## Installation Guide
+
+### Installing Node.js and npm
+
+#### Windows
+1. Download Node.js from https://nodejs.org/
+2. Run the installer and follow the setup wizard
+3. Verify installation:
+```bash
+node --version
+npm --version
+```
+
+#### macOS
+Using Homebrew:
+```bash
+brew install node
+```
+
+Or download from https://nodejs.org/
+
+#### Linux (Ubuntu/Debian)
+```bash
+# Using NodeSource repository
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# Verify installation
+node --version
+npm --version
+```
+
+### Installing Go
+
+#### Windows
+1. Download Go from https://golang.org/dl/
+2. Run the MSI installer
+3. Add Go to your PATH (usually done automatically)
+4. Verify installation:
+```bash
+go version
+```
+
+#### macOS
+Using Homebrew:
+```bash
+brew install go
+```
+
+Or download from https://golang.org/dl/
+
+#### Linux
+```bash
+# Download and extract
+wget https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
+sudo rm -rf /usr/local/go
+sudo tar -C /usr/local -xzf go1.23.0.linux-amd64.tar.gz
+
+# Add to PATH (add to ~/.bashrc or ~/.profile)
+export PATH=$PATH:/usr/local/go/bin
+
+# Reload shell or source the file
+source ~/.bashrc
+
+# Verify installation
+go version
+```
+
+### Installing PostgreSQL
+
+#### Windows
+1. Download PostgreSQL from https://www.postgresql.org/download/windows/
+2. Run the installer
+3. Remember the password you set for the postgres user
+4. PostgreSQL service should start automatically
+
+#### macOS
+Using Homebrew:
+```bash
+brew install postgresql
+brew services start postgresql
+
+# Create a database user (optional, for development)
+createuser -s postgres
+```
+
+#### Linux (Ubuntu/Debian)
+```bash
+# Install PostgreSQL
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+
+# Start PostgreSQL service
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+
+# Switch to postgres user and create database
+sudo -i -u postgres
+createuser --interactive
+createdb your_database_name
+exit
+```
+
+### Installing IPFS
+
+#### Windows
+1. Download IPFS Desktop from https://github.com/ipfs-shipyard/ipfs-desktop/releases
+2. Run the installer
+3. Start IPFS Desktop
+4. The daemon will run automatically
+
+#### macOS
+Using Homebrew:
+```bash
+brew install ipfs
+```
+
+Or download IPFS Desktop from https://github.com/ipfs-shipyard/ipfs-desktop/releases
+
+#### Linux
+```bash
+# Download IPFS
+wget https://dist.ipfs.tech/kubo/v0.24.0/kubo_v0.24.0_linux-amd64.tar.gz
+tar -xvzf kubo_v0.24.0_linux-amd64.tar.gz
+cd kubo
+sudo bash install.sh
+
+# Initialize IPFS
+ipfs init
+
+# Start daemon
+ipfs daemon
+```
+
+Or install IPFS Desktop:
+```bash
+# Download AppImage
+wget https://github.com/ipfs-shipyard/ipfs-desktop/releases/download/v0.28.0/ipfs-desktop-0.28.0-linux-x86_64.AppImage
+chmod +x ipfs-desktop-0.28.0-linux-x86_64.AppImage
+./ipfs-desktop-0.28.0-linux-x86_64.AppImage
+```
+
 ## Setup Instructions
 
 ### 1. Clone the Repository
